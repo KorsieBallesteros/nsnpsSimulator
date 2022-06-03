@@ -2,149 +2,36 @@ import numpy as np
 from anytree import Node, RenderTree
 from anytree.exporter import DotExporter
 from graphviz import render, Source
+import sys
+import gen_ss_det
+import gen_ss_non_det
 
-'''
-C = [1,1,2] #Configuration Vector C^0
-F = np.array([[1,1,0],[0.5,0.5,0],[0,0,1],[0,0,0.5]]) #Production Function Matrix
-FL = np.array([[1,0],[1,0],[0,1],[0,1]]) # Function  Location Matrix
-syn = [(0,1),(1,0)]
+#choose between non_determinisic solution and deterministic
+if sys.argv[1] == 'gen_ss_non_det':
 
-
-no_func = np.array([0,0,0,0])
-
-T =  np.array([0,0,0,4])
-has_threshold = [0,0,0,1]
-'''
-'''
-C = [1,2,0,0,
-    5,0,0,0,0] #Configuration Vector C^0    
-F = np.array([[1,0,0,0,0,0,0,0,0],[-1,0,0,0,0,0,0,0,0],
-              [0,1,0,0,0,0,0,0,0],[0,-1,0,0,0,0,0,0,0],
-              [0,0,1,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0],
-              [0,0,0,0,-1,0,0,0,0],[0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,-1,0,0],[0,0,0,0,0,0,0,1,0]
-                ]) #Production Function Matrix
-FL = np.array([[1,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0],
-              [0,1,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0],
-              [0,0,1,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0],
-              [0,0,0,0,1,0,0,0,0],[0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,0]
-            ]) # Function  Location Matrix
-syn = [(0,2),(1,3),(3,6),(2,6),(4,5),(5,6),(6,7)]
-
-no_func = np.array([0,0,0,0,0,0,0,0,0,0])
-
-T =  np.array([0,0,0,0,0,0,0,0,-1,1,0])
-has_threshold = [0,1,0,1,0,0,0,0,1,1,0]
-'''
-'''
-C = [1,1,1,0,0,2]#Configuration Vector C^0
-F = np.array([[0.5,0.5,0,0,0,0],[0,0,1,0,0,0],[0,0,-1,0,0,0],[0,0,0,1,0,0],[0,0,0,0,-1,0],[0,0,0,0,0,0.5]]) #Production Function Matrix
-FL = np.array([[1,0,0,0,0],[0,1,0,0,0],[0,1,0,0,0],[0,0,1,0,0],[0,0,0,1,0],[0,0,0,0,1]]) # Function  Location Matrix
-T =  np.array([1,0,0,0,0,0]) # Threshold Vector
-no_func = np.array([0,0,0,0,0,0,0,0,0])
-syn = [(0,1),(1,0),(0,2),(1,3),(2,4),(3,4)] # synapse matrix
-'''
-
-
-#Addition Module
-'''
-C = [1,-1,0,0,0,0,0,0,0]#Configuration Vector C^0
-F = np.array([[1,0,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0],[0,0,0,-1,0,0,0,0,0],[0,0,0,0,-1,0,0,0,0],[0,0,0,0,0,0.5,0,0,0],[0,0,0,0,0,0,-0.5,0,0],[0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,1]]) #Production Function Matrix
-FL = np.array([[1,0,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0],[0,0,0,1,0,0,0,0,0],[0,0,0,0,1,0,0,0,0],[0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,1]]) # Function  Location Matrix
-T =  np.array([0,0,0,0,0,0,0,0,0]) # Threshold Vector
-no_func = np.array([0,1,0,0,0,0,0,0,0])
-syn = [(0,2),(0,3),(0,4),(2,5),(3,5),(3,6),(4,1),(4,6),(5,7),(6,8)] # synapse matrix
-'''
-'''
-C = [100,50,0,0]
-F = np.array([[1,0,0,0],[0,1,0,0],[0,0,1,0]])
-FL = np.array([[1,0,0,0],[0,1,0,0],[0,0,1,0]])
-T =  np.array([0,0,1]) 
-no_func = np.array([0,0,0,1])
-syn = [(0,2),(1,2),(2,3)]
-
-
-#Subtraction Module
-C = [1,1,0,0,0,0,0,0,0,0,0,0,0]#Configuration Vector C^0
-F = np.array([[1,0,0,0,0,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0,0,0,0,0],
-              [0,0,0,0,-1,0,0,0,0,0,0,0,0],[0,0,0,0,0,0.5,0,0,0,0,0,0,0],[0,0,0,0,0,0,-1,0,0,0,0,0,0],[0,0,0,0,0,0,0,1,0,0,0,0,0],
-              [0,0,0,0,0,0,0,0,-1,0,0,0,0],[0,0,0,0,0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,0,0,0,0,2,0,0],[0,0,0,0,0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,0,0,0,0,1]]) #Production Function Matrix
-FL = np.array([[1,0,0,0,0,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0,0,0,0,0],
-              [0,0,0,0,1,0,0,0,0,0,0,0,0],[0,0,0,0,0,1,0,0,0,0,0,0,0],[0,0,0,0,0,0,1,0,0,0,0,0,0],[0,0,0,0,0,0,0,1,0,0,0,0,0],
-              [0,0,0,0,0,0,0,0,1,0,0,0,0],[0,0,0,0,0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,0,0,0,0,1]]) 
-T =  np.array([0,1,0,0,0,2,0,0,0,0,0,0,0]) 
-no_func = np.array([0,0,0,0,0,0,0,0,0,0,0,0,0])
-syn = [(0,1),(0,2),(1,5),(1,6),(2,3),(2,5),(3,4),(3,7),(4,5),(5,8),(5,9),(5,10),(6,5),(7,11),(8,11),(9,12),(10,5)]
-'''
-
-'''
-#Fin Module
-C = [1,-2,0,0,0,0,0,0]
-F = np.array([[1,0,0,0,0,0,0,0],[0,-1,0,0,0,0,0,0],[0,0,1,0,0,0,0,0],[0,0,0,1,0,0,0,0],[0,0,0,0,1,0,0,0],[0,0,0,0,0,-1,0,0],[0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,-1]])
-FL = np.array([[1,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0],[0,0,1,0,0,0,0,0],[0,0,0,1,0,0,0,0],[0,0,0,0,1,0,0,0],[0,0,0,0,0,1,0,0],[0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,1]])
-T =  np.array([0,1,0,1,0,0,1,0])
-no_func = np.array([0,0,0,0,0,0,0,0])
-syn = [(0,2),(0,3),(0,4),(1,6),(1,3),(1,7),(2,5),(3,6),(4,1),(4,3),(5,7),(6,3),(6,1)]
-'''
-'''
-C = [1,0,0,0,0,0,0,0]#Configuration Vector C^0
-F = np.array([[1,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0],[0,0,1,0,0,0,0,0],[0,0,0,1,0,0,0,0],[0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0]])
-'''
-#C is 2n +  4 elements
-
-S = [9,8,7,6]
-SUM = 13
-conf=[]
-for i in range(2*len(S)+6):
-    if (i<len(S)):
-        conf.append(S[i])
-    elif (i>len(S) and i <=2*len(S)):
-        conf.append(0)
-    elif i ==2*len(S)+1:
-        conf.append(SUM+1)
-    elif i == 2*len(S) + 2:
-        conf.append(0)
-    elif i == 2*len(S) + 3:
-        conf.append(0)
-    elif i == 2*len(S) + 4:
-        conf.append(0)
-    elif i == 2*len(S) + 5:
-        conf.append(0)
-
-print (conf)
-
-C = [1,2,3,0,0,0,
-     7,0,0,0,
-     0]
-#C = conf
-
-#first len(S) array alloted for nondeterministic choice
-F = np.array([[1,0,0,0,0,0,0,0,0,0,0],[-1,0,0,0,0,0,0,0,0,0,0], 
-              [0,1,0,0,0,0,0,0,0,0,0],[0,-1,0,0,0,0,0,0,0,0,0],
-              [0,0,1,0,0,0,0,0,0,0,0],[0,0,-1,0,0,0,0,0,0,0,0],
-              [0,0,0,1,0,0,0,0,0,0,0],[0,0,0,0,1,0,0,0,0,0,0],[0,0,0,0,0,1,0,0,0,0,0],
-              [0,0,0,0,0,0,-1,0,0,0,0],[0,0,0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,0,0,-1,0,0],[0,0,0,0,0,0,0,0,0,1,0]
-              ])
-FL = np.array([[1,0,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0,0], 
-               [0,1,0,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0,0,0],
-               [0,0,1,0,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0,0,0],
-               [0,0,0,1,0,0,0,0,0,0,0],[0,0,0,0,1,0,0,0,0,0,0],[0,0,0,0,0,1,0,0,0,0,0],
-               [0,0,0,0,0,0,1,0,0,0,0],[0,0,0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,0,0,1,0]
-               ])
-
-no_func = np.array([0,0,0,0,0,0,0,0,0,0,0])
-
-T =  np.array([0,0,0,0,0,0,0,0,0,0,0,-1,1,0])
-has_threshold = [0,0,0,0,0,0,1,1,1,0,0,1,1,0]
-
-syn = [(0,3),(1,4),(2,5),(3,8),(4,8),(5,8),(6,7),(7,8),(8,9),(9,10)]
-
-
+    C = gen_ss_non_det.C
+    F = np.array(gen_ss_non_det.F)
+    FL = np.array(gen_ss_non_det.L)
+    no_func = gen_ss_non_det.no_func
+    T = gen_ss_non_det.T
+    has_threshold = gen_ss_non_det.has_threshold
+    syn = gen_ss_non_det.syn
+    
+elif sys.argv[1] == 'gen_ss_det':
+    C = gen_ss_det.C
+    F = np.array(gen_ss_det.F)
+    FL = np.array(gen_ss_det.L)
+    no_func = gen_ss_det.no_func
+    T = gen_ss_det.T
+    has_threshold = gen_ss_det.has_threshold
+    syn = gen_ss_det.syn
 
 
 num_neuron = FL.shape[1]
 num_func = FL.shape[0]
 num_var = F.shape[1]
-print(num_neuron,num_func,num_var)
+
+
 #returns list of variables for a given function
 def getVars(index_function):
     vars = []
@@ -154,10 +41,8 @@ def getVars(index_function):
     return vars
 
 #check all variables in index_function if greater than threshold i
-
 def checkThreshold(c, index_function):
     vars = getVars(index_function)
-    #print(vars)
     if has_threshold[index_function]:
 
         for var in vars:
@@ -176,6 +61,7 @@ def getFunctions(m,Active):
         if Active[i][m]: 
             functions.append(i)
     return functions
+    
 #generateSpiking matrix and create functionswasUsed matrix
 def generateSpikingMatrix(configuration):
     Active = FL.copy()
@@ -194,7 +80,6 @@ def generateSpikingMatrix(configuration):
                     functionWasUsed.append(0)
             else:
                 Active[j][i] = 0
-                #functionWasUsed.append(0)
         num_possible.append(count)
 
 
@@ -232,11 +117,13 @@ def getNeuronFromFunction(index_function):
     for j in range(0,num_neuron):
         if FL[index_function][j]:
             return j
+            
 #get neuron index given an input variable
 def getNeuronFromVar(var):
     for i in range(0,num_func):
         if F[i][var] != 0:
             return getNeuronFromFunction(i)
+            
 #generates the production matrix
 def generateProductionMatrix(configuration):
     PM = np.zeros((num_func,num_var), dtype = int)
@@ -246,15 +133,18 @@ def generateProductionMatrix(configuration):
             sum = sum + F[i][j]*configuration[j]
 
         m = getNeuronFromFunction(i)
-
+        
+        
         for var in range(0,num_var):
             if (no_func[var]):
                 k = var
+                #k = getNeuronFromVar(var)
             else:
                 k = getNeuronFromVar(var)
             if (m,k) in syn:
                 PM[i][var] = sum
     return PM
+    
 #returns a list of used variables from an input of used functions
 def UsedVariables(usedFunctionList):
     usedVars = []
@@ -262,7 +152,6 @@ def UsedVariables(usedFunctionList):
         usedVars.append(0)
 
     for i in range(0,num_func):
-        #print(num_func)
         if usedFunctionList[i] == 1:
             vars = getVars(i)
             for var in vars:
@@ -274,9 +163,10 @@ def UsedVariables(usedFunctionList):
 
     return usedVars
 
+                
 UnexploredStates = [C]
 ExploredStates = []
-depth = 2
+depth = 10
 curr_depth = 0
 
 #list of Node objects representing various configurations
@@ -311,8 +201,8 @@ while (UnexploredStates != []):
             for j in range(0,num_var):
                 if vars_used[j] == 0:
                     C_old[i][j] = configuration[j]
-        #print(C_old,vars_used)
-        #print(PM)
+
+
         C_next = np.add(C_old,net_gain)
         C_next = np.unique(C_next,axis =0)
 
@@ -326,8 +216,9 @@ while (UnexploredStates != []):
                 parent = i
                 break
 
+
         for row in C_next:
-            #print(row.tolist())
+
             if ExploredStates == []:
                 nextStates.append(row.tolist())
                 node = Node(str(row.tolist()),parent = historyNode[parent])
@@ -338,30 +229,31 @@ while (UnexploredStates != []):
                 historyNode.append(node)
                 nextStates.append(row.tolist())
         
-        #print("parent is:"+str(i))
-        #print("children is/are:"+str(historyNode[i].children))
         ExploredStates.append(configuration)
         nextRemove.append(configuration)
 
-        #print("explored states: "+str(ExploredStates))
     max_node_index = len(historyNode)-1
     min_node_index = max_node_index-len(nextStates)
-
+    
     for state in nextRemove:
         UnexploredStates.remove(state)
-
-    #print(nextStates,type(nextStates))
 
     for state in nextStates:
         #if not already in ExploredStates append
         if state  not in ExploredStates:
             UnexploredStates.append(state)
+        else:
+            continue
+        
     if (UnexploredStates == []):
         break
+        
     if curr_depth < depth: 
         curr_depth += 1
+        
     else:
         break
+
 
 for pre, fill, node in RenderTree(historyNode[0]):
     print("%s%s" % (pre, node.name))
