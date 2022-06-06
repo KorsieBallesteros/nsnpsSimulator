@@ -1,3 +1,12 @@
+# Installation
+cd ~/nsnpsSimulator
+
+Python 3.9.1
+pip install numba
+pip install anytree
+pip install graphviz
+pip install json
+
 # Simulator for Numerical Spiking Neural P Systems (NSNP Systems)
 
 Generates Computation graphs of input NSNP systems.
