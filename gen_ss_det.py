@@ -110,8 +110,8 @@ def genConfiguration(S,SUM):
     return C
     
 
-set = [1,2,3] #input set of numbers to the subset sum problem
-target_sum = 6
+set = input_ss.set #input set of numbers to the subset sum problem
+target_sum = input_ss.target_sum
 input_size = len(set)
 
 

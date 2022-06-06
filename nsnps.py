@@ -5,7 +5,7 @@ from graphviz import render, Source
 import sys
 import gen_ss_det
 import gen_ss_non_det
-
+import time
 #choose between non_determinisic solution and deterministic
 if sys.argv[1] == 'gen_ss_non_det':
 
@@ -163,6 +163,12 @@ def UsedVariables(usedFunctionList):
 
     return usedVars
 
+def naiveMatrixMult(A,B):
+    result = [[sum(a * b for a, b in zip(A_row, B_col))
+                        for B_col in zip(*B)]
+                                for A_row in A]
+    return result
+    
                 
 UnexploredStates = [C]
 ExploredStates = []
@@ -173,6 +179,10 @@ curr_depth = 0
 historyNode = []
 historyNode.append(Node(str(C)))
 
+time_sum = 0
+time_sum_ng = 0
+time_sum_pm = 0
+program_start = time.time()
 while (UnexploredStates != []):
     nextStates = []
     nextRemove = []
@@ -187,12 +197,28 @@ while (UnexploredStates != []):
 
         #generate spiking and production matrix
         functionWasUsed = []
+        
+        #spiking matrix computation
+        start = time.time()
         S = generateSpikingMatrix(configuration)
+        end = time.time()
+        time_sum+=(end-start)
+        
         vars_used = UsedVariables(functionWasUsed)
+        
+        #production matrix computation
+        time_start_pm =  time.time()
         PM = generateProductionMatrix(configuration)
+        time_end_pm = time.time()
+        time_sum_pm+=(time_end_pm-time_start_pm)
 
-
-        net_gain = np.matmul(S,PM)
+        #net gain matrix computation
+        time_start_net_gain =  time.time()
+        #net_gain = np.matmul(S,PM)
+        net_gain = np.array(naiveMatrixMult(S,PM))
+        time_end_net_gain = time.time()
+        time_sum_ng+=(time_end_net_gain-time_start_net_gain)
+        
         q_next = net_gain.shape[0]
         C_old =  np.zeros((q_next,num_var), dtype = int)
 
@@ -253,7 +279,11 @@ while (UnexploredStates != []):
         
     else:
         break
-
+program_end = time.time()
+print("Spiking matrix time: ",time_sum)
+print("Production matrix time: ", time_sum_pm)
+print("Net gain time: ",time_sum_ng)
+print("Total time: ",program_end-program_start)
 
 for pre, fill, node in RenderTree(historyNode[0]):
     print("%s%s" % (pre, node.name))
